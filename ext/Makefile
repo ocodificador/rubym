@@ -81,11 +81,11 @@ debugflags = -ggdb3
 warnflags = -Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wunused-variable -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat
 CCDLFLAGS = -fPIC
 CFLAGS   = $(CCDLFLAGS) $(cflags)  -fPIC $(ARCH_FLAG)
-INCFLAGS = -I. -I$(arch_hdrdir) -I$(hdrdir)/ruby/backward -I$(hdrdir) -I$(srcdir) -I/usr/local/gtm
+INCFLAGS = -I. -I$(arch_hdrdir) -I$(hdrdir)/ruby/backward -I$(hdrdir) -I$(srcdir) -I$(gtm_dist)
 DEFS     = -D_FILE_OFFSET_BITS=64
-CPPFLAGS =  -I/home/joao/.rbenv/versions/2.3.0/include $(DEFS) $(cppflags)
+CPPFLAGS =  -I/home/joao/.rbenv/versions/2.3.0/include  $(DEFS) $(cppflags)
 CXXFLAGS = $(CCDLFLAGS) $(cxxflags) $(ARCH_FLAG)
-ldflags  = -L. -L/home/joao/.rbenv/versions/2.3.0/lib  -fstack-protector -rdynamic -Wl,-export-dynamic -L /usr/local/gtm -Wl,-rpath=/usr/local/gtm -lgtmshr
+ldflags  = -L. -L/home/joao/.rbenv/versions/2.3.0/lib  -fstack-protector -rdynamic -Wl,-export-dynamic -L $(gtm_dist) -Wl,-rpath=$(gtm_dist) -lgtmshr
 dldflags =  
 ARCH_FLAG = 
 DLDFLAGS = $(ldflags) $(dldflags) $(ARCH_FLAG)
