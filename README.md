@@ -2,7 +2,7 @@
 
 ## A Ruby binding and driver for the GT.M language and database ##
 
-Version 0.0.1 - 2016 Jan 06  - The NodeM is used as base of this one
+Version 0.0.1 - 2016 Jan 06  - The NodeM was used as base of this one
 
 
 ## Disclaimer ##
