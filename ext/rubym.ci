@@ -13,7 +13,7 @@ set       :gtm_char_t* set^v4wNode(I:gtm_char_t*, I:gtm_char_t*, I:gtm_char_t*)
 unlock    :gtm_char_t* unlock^v4wNode(I:gtm_char_t*, I:gtm_char_t*)
 update    :gtm_char_t* update^v4wNode()
 
-test1     :void t1^rubym( O:gtm_char_t* )
+test1     :void t1^ruby( O:gtm_char_t* )
 
 gtmget    : void get^%gtmaccess( I:gtm_char_t*, O:gtm_string_t*, O:gtm_char_t* )
 gtminit   : void init^%gtmaccess( O:gtm_char_t* )
@@ -23,8 +23,8 @@ gtmquery  : void query^%gtmaccess( I:gtm_char_t*, O:gtm_string_t*, O:gtm_char_t*
 gtmset    : void set^%gtmaccess( I:gtm_char_t*, I:gtm_string_t*, O:gtm_char_t*)
 gtmxecute : void xecute^%gtmaccess( I:gtm_char_t*, O:gtm_char_t* )
 
-versionxx	: void	version^rubym( O:gtm_string_t*, O:gtm_char_t* )
-version		: void	version^rubym( O:gtm_char_t*, O:gtm_char_t* )
-killXX		: void	kill^rubym( I:gtm_char_t*, I:gtm_char_t*, O:gtm_char_t* )
-kill		: void	kill^rubym( I:gtm_char_t*, I:gtm_char_t*, O:gtm_char_t*, O:gtm_char_t* )
-data		: void	data^rubym( I:gtm_char_t*, I:gtm_char_t*, O:gtm_char_t*, O:gtm_char_t* )
+data		: void	data^ruby( I:gtm_char_t*, I:gtm_char_t*, O:gtm_char_t*, O:gtm_char_t* )
+get		: void	get^ruby( I:gtm_char_t*, I:gtm_char_t*, O:gtm_char_t*, O:gtm_char_t* )
+init		: void	init^ruby( O:gtm_char_t* )
+kill		: void	kill^ruby( I:gtm_char_t*, I:gtm_char_t*, O:gtm_char_t*, O:gtm_char_t* )
+version		: void	version^ruby( O:gtm_char_t*, O:gtm_char_t* )

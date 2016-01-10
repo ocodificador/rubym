@@ -1,4 +1,4 @@
-rubym	; entry points to access GT.M
+rubm	; entry points to access GT.M
 	; A GT.M database driver for Ruby based on Nodem
 	;
 	; Written by David Wicksell <dlw@linux.com>
@@ -20,7 +20,40 @@ rubym	; entry points to access GT.M
 	;
 	quit:$q "Call an API entry point" w "Call an API entry point" quit
 	;
+v2j(v)	; Convert variable with single index, for now, to a json string
+	;
+	n i,result,value,dq
+	s dq=$c(34),(result,i)=""
+	f  s i=$o(v(i)) q:i=""  d
+	.s value=v(i)
+	.i value'?.n!(value+0'=value) s value=dq_value_dq
+	.s result=result_dq_i_dq_": "_value_", "
+	.q
+	s result="{ "_$e(result,1,$l(result)-2)_" }"
+	;
+	quit:$quit result quit
+	;
+	;
+init(error)
+	;set $ztrap="new tmp set error=$ecode set tmp=$piece($ecode,"","",2) quit:$quit $extract(tmp,2,$length(tmp)) quit"
+	set $ztrap="g zica^ruby"
+	quit:$quit 0 quit
+	;
+zica	;
+	;;i $g(^zrubydebug)=1 s ^zrubyerr($h,$j,$o(^zrubyerr($h,$j,""),-1)+1)=$zstatus
+	;
+	n t
+	s error=$zstatus
+	s t("ok")=0
+	s t("ecode")=$ecode
+	s t("zstauts")=$zstatus
+	s result=$$v2j(.t)
+	;
+	quit:$quit error quit
+	;
+	;
 version(result,error) ; return the version string
+	u $p:ctrap="$c(3)" ;handle a Ctrl-C/SIGINT, while in GT.M, in a clean manner
 	set result="RubyM the extension for GT.M: Version: 0.0.1 ; "_$zv
         quit:$quit 0 quit
 	;
@@ -30,29 +63,56 @@ construct:(glvn,subs) ;construct a global reference
 	;
 	;
 data(glvn,subs,result,error) ;check if global node has data or children
+	u $p:ctrap="$c(3)" ;handle a Ctrl-C/SIGINT, while in GT.M, in a clean manner
 	;
-	new defined,globalname
+	n t,globalname
 	;
-	set error=""
-	set globalname=$$construct(glvn,subs)
-	set defined=$d(@globalname)
-	set result="{""ok"": 1, ""global"": """_glvn_""", ""subscripts"": """_subs_""", ""defined"": "_defined_"}"
+	s error=""
+	s globalname=$$construct(glvn,subs)
+	s t("ok")=1
+	s t("method")="data"
+	s t("global")=glvn
+	s t("subs")=subs
+	;
+	set t("defined")=$d(@globalname)
+	set result=$$v2j(.t)
+	;
+        quit:$quit 0 quit
+	;
+get(glvn,subs,result,error)	;get data from global node
+	u $p:ctrap="$c(3)" ;handle a Ctrl-C/SIGINT, while in GT.M, in a clean manner
+	;
+	n value,globalname,t
+	;
+	s globalname=$$construct(glvn,subs)
+	s value=$$oconvert($$oescape($g(@globalname)))
+	;
+	s t("ok")=1
+	s t("method")="get"
+	s t("global")=glvn
+	s t("subs")=subs
+	s t("defined")=$d(@globalname)#10
+	s t("value")=value
+	;
+	s result=$$v2j(.t)
 	;
         quit:$quit 0 quit
 	;
 kill(glvn,subs,result,error)   ; kill a global or global node
+	u $p:ctrap="$c(3)" ;handle a Ctrl-C/SIGINT, while in GT.M, in a clean manner
         ;
-        new globalname
+        n globalname,t
         ;
-        set globalname=$$construct(glvn,subs)
+        s globalname=$$construct(glvn,subs)
         ;
-        kill @globalname
+        k @globalname
 	;
-	set result="{""ok"": 1, ""global"": """_glvn_""", ""subscripts"": """_subs_""""_"}"
+	s t("ok")=1
+	s t("method")="kill"
+	s t("global")=glvn
+	s t("subs")=subs
+	s result=$$v2j(.t)
         ;
-	quit:$quit 0 quit
-init(error)
-	set $ztrap="new tmp set error=$ecode set tmp=$piece($ecode,"","",2) quit:$quit $extract(tmp,2,$length(tmp)) quit"
 	quit:$quit 0 quit
 	;
 query(var,value,error)
@@ -188,26 +248,6 @@ function(func,args,relink) ;call an arbitrary extrinsic function
  s result=$$oconvert(result)
  ;
  quit "{""ok"": 1, ""function"": """_func_""", ""result"": "_result_"}"
- ;
- ;
-get(glvn,subs) ;get data from global node
- u $p:ctrap="$c(3)" ;handle a Ctrl-C/SIGINT, while in GT.M, in a clean manner
- ;
- n data,defined,globalname,return
- ;
- s subs=$$parse($g(subs),"input")
- s globalname=$$construct(glvn,subs)
- s data=$g(@globalname)
- ;
- s data=$$oescape(data)
- s data=$$oconvert(data)
- ;
- s defined=$d(@globalname)#10
- ;
- s return="{""ok"": 1, ""global"": """_glvn_""","
- s return=return_" ""data"": "_data_", ""defined"": "_defined_"}"
- ;
- quit return
  ;
  ;
 globalDirectory(max,lo,hi) ;list the globals in a database, filtered or not
