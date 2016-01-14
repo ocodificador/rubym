@@ -12,13 +12,11 @@
 #define maxmsg	2048	// maximum length of a GT.M message
 #define maxstr	1048576	// maximum length of a value
 
-// GT.M call wrapper
+// GT.M call wrapper - From official examples
 // if an error in call or untrappable error in GT.M, print error on STDERR, clean up and exit
-// From GT.M examples
 #define CALLGTM(xyz) status = xyz ;             \
   if (status != 0) {                            \
     gtm_zstatus( msg, maxmsg );                 \
-    puts("nao tratou");				\
     fprintf( stderr, "%s\n", msg );             \
     gtm_exit();					\
     return status ;                             \
@@ -52,6 +50,14 @@ static VALUE t_get(VALUE self, VALUE glvn, VALUE subs)
   gtm_char_t result[maxstr];
   gtm_char_t errors[maxmsg];
   CALLGTM( gtm_ci( "get", StringValuePtr(glvn), StringValuePtr(subs), &result, &errors ));
+  return (strlen( errors ) == 0) ? rb_str_new2(result) : Qnil;
+}
+
+static VALUE t_set(VALUE self, VALUE glvn, VALUE subs, VALUE content)
+{
+  gtm_char_t result[maxstr];
+  gtm_char_t errors[maxmsg];
+  CALLGTM( gtm_ci( "set", StringValuePtr(glvn), StringValuePtr(subs), StringValuePtr(content), &result, &errors ));
   return (strlen( errors ) == 0) ? rb_str_new2(result) : Qnil;
 }
 
@@ -97,6 +103,7 @@ void Init_rubym() {
   rb_define_method(c_gtm, "version",		t_version, 0);
   rb_define_method(c_gtm, "data",		t_data, 2);
   rb_define_method(c_gtm, "get",		t_get, 2);
+  rb_define_method(c_gtm, "set",		t_set, 3);
 /*
   rb_define_method(c_gtm, "function",		t_function, 1);
   rb_define_method(c_gtm, "global_directory",	t_global_dir, 1);
@@ -107,10 +114,7 @@ void Init_rubym() {
   rb_define_method(c_gtm, "next_node",		t_next_node, 1);
   rb_define_method(c_gtm, "previous",		t_previous, 1);
   rb_define_method(c_gtm, "previous_node",	t_previous_node, 0);
-  rb_define_method(c_gtm, "retrieve",		t_retrieve, 0);
-  rb_define_method(c_gtm, "set",		t_set, 1);
   rb_define_method(c_gtm, "unlock",		t_unlock, 1);
-  rb_define_method(c_gtm, "update",		t_update, 0);
 */
 }
 

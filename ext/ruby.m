@@ -69,13 +69,27 @@ data(glvn,subs,result,error) ;check if global node has data or children
 	;
 	s error=""
 	s globalname=$$construct(glvn,subs)
-	s t("ok")=1
-	s t("method")="data"
-	s t("global")=glvn
-	s t("subs")=subs
+	s t("ok")=1,t("method")="data"
+	s t("global")=glvn,t("subs")=subs
 	;
 	set t("defined")=$d(@globalname)
 	set result=$$v2j(.t)
+	;
+        quit:$quit 0 quit
+	;
+set(glvn,subs,content,result,error)	; set the content data of a global node
+	u $p:ctrap="$c(3)" ;handle a Ctrl-C/SIGINT, while in GT.M, in a clean manner
+	;
+	n value,globalname,t
+	;
+	s globalname=$$construct(glvn,subs)
+	s @globalname=$$iconvert(content)
+	;
+	s t("ok")=1,t("method")="set"
+	s t("global")=glvn,t("subs")=subs
+	s t("defined")=$d(@globalname)#10
+	;
+	s result=$$v2j(.t)
 	;
         quit:$quit 0 quit
 	;
@@ -87,10 +101,8 @@ get(glvn,subs,result,error)	;get data from global node
 	s globalname=$$construct(glvn,subs)
 	s value=$$oconvert($$oescape($g(@globalname)))
 	;
-	s t("ok")=1
-	s t("method")="get"
-	s t("global")=glvn
-	s t("subs")=subs
+	s t("ok")=1,t("method")="get"
+	s t("global")=glvn,t("subs")=subs
 	s t("defined")=$d(@globalname)#10
 	s t("value")=value
 	;
@@ -107,10 +119,8 @@ kill(glvn,subs,result,error)   ; kill a global or global node
         ;
         k @globalname
 	;
-	s t("ok")=1
-	s t("method")="kill"
-	s t("global")=glvn
-	s t("subs")=subs
+	s t("ok")=1,t("method")="kill"
+	s t("global")=glvn,t("subs")=subs
 	s result=$$v2j(.t)
         ;
 	quit:$quit 0 quit
@@ -421,30 +431,6 @@ previousNode(glvn,subs) ;same as nextNode, only in reverse
  quit "{""status"": ""previous_node not yet implemented""}"
  ;
  ;
-retrieve() ;not yet implemented
- u $p:ctrap="$c(3)" ;handle a Ctrl-C/SIGINT, while in GT.M, in a clean manner
- ;
- quit "{""status"": ""retrieve not yet implemented""}"
- ;
- ;
-set(glvn,subs,data) ;set a global node
- u $p:ctrap="$c(3)" ;handle a Ctrl-C/SIGINT, while in GT.M, in a clean manner
- ;
- n globalname
- ;
- s subs=$$parse($g(subs),"input")
- s globalname=$$construct(glvn,subs)
- ;
- s data=$$iconvert(data)
- ;
- s $e(data)=$tr($e(data),"""","")
- s $e(data,$l(data))=$tr($e(data,$l(data)),"""","")
- ;
- s @globalname=data
- ;
- quit "{""ok"": 1, ""global"": """_glvn_""", ""result"": ""0""}"
- ;
- ;
 unlock(glvn,subs) ;unlock a global node, incrementally, or release all locks
  u $p:ctrap="$c(3)" ;handle a Ctrl-C/SIGINT, while in GT.M, in a clean manner
  ;
@@ -457,11 +443,5 @@ unlock(glvn,subs) ;unlock a global node, incrementally, or release all locks
  e  l -@globalname
  ;
  quit "{""ok"": 1, ""global"": """_glvn_""", ""result"": ""0""}"
- ;
- ;
-update() ;not yet implemented
- u $p:ctrap="$c(3)" ;handle a Ctrl-C/SIGINT, while in GT.M, in a clean manner
- ;
- quit "{""status"": ""update not yet implemented""}"
  ;
  ;
